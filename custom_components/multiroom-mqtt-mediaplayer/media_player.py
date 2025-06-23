@@ -102,7 +102,7 @@ MUTE_TEMPLATE = "mute_template"
 
 POWER = "power"
 POWER_TOPIC = "power_topic"
-POWER_TEMPLATE = "power_tempalte"
+POWER_TEMPLATE = "power_template"
 
 PLAYERSTATUS_TOPIC = "player_status_topic"
 PLAYERSTATUS_TEMPLATE = "player_status_template"
@@ -167,8 +167,8 @@ ATTR_MAXVOLUME = "max_volume"
 
 PLATFORM_SCHEMA = MQTT_BASE_SCHEMA.extend(
     {
-        vol.Required("platform"): cv.string,     
-        vol.Required(CONF_NAME): cv.string,     
+        vol.Required("platform"): cv.string,
+        vol.Required(CONF_NAME): cv.string,
         vol.Optional(CONF_UNIQUE_ID): cv.string,
         vol.Optional(MULTIROOMID): cv.string,
         vol.Optional(MEDIA_TITLE_TOPIC): mqtt.valid_subscribe_topic,
@@ -192,11 +192,11 @@ PLATFORM_SCHEMA = MQTT_BASE_SCHEMA.extend(
         vol.Optional(SOURCE_TOPIC): mqtt.valid_subscribe_topic,
         vol.Optional(SOURCE_TEMPLATE): cv.template,
         vol.Optional(SOURCELIST_TOPIC): mqtt.valid_subscribe_topic,
-        vol.Optional(SOURCELIST_TEMPLATE): cv.template,   
+        vol.Optional(SOURCELIST_TEMPLATE): cv.template,
         vol.Optional(SOUNDMODE_TOPIC): mqtt.valid_subscribe_topic,
         vol.Optional(SOUNDMODE_TEMPLATE): cv.template,
         vol.Optional(SOUNDMODELIST_TOPIC): mqtt.valid_subscribe_topic,
-        vol.Optional(SOUNDMODELIST_TEMPLATE): cv.template,   
+        vol.Optional(SOUNDMODELIST_TEMPLATE): cv.template,
         vol.Optional(POWER_TOPIC): mqtt.valid_subscribe_topic,
         vol.Optional(POWER_TEMPLATE): cv.template,
         vol.Optional(PLAYERSTATUS_TOPIC): mqtt.valid_subscribe_topic,
@@ -233,7 +233,7 @@ PLATFORM_SCHEMA = MQTT_BASE_SCHEMA.extend(
         vol.Optional(JOIN_ACTION): cv.SCRIPT_SCHEMA,
         vol.Optional(UNJOIN_ACTION): cv.SCRIPT_SCHEMA,
         vol.Optional(PAYLOAD_PLAYERSTATUS): cv.string,
-        vol.Optional(PAYLOAD_POWEROFFSTATUS): cv.string,  
+        vol.Optional(PAYLOAD_POWEROFFSTATUS): cv.string,
         vol.Optional(PAYLOAD_MULTIROOM_MASTER): cv.string,
         vol.Optional(PLAY_MEDIA_ACTION): cv.SCRIPT_SCHEMA,
     }
@@ -355,7 +355,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._unjoin_script = Script(hass, unjoin_action, self._name, self._domain)
         if play_media_action :=config.get(PLAY_MEDIA_ACTION):
             self._play_media_script = Script(hass, play_media_action, self._name, self._domain)
-        
+
 
         self._supported_features = (
             MediaPlayerEntityFeature.PLAY
@@ -452,7 +452,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             else:
                 tpl.hass = self.hass
                 self._templates[key] = tpl.async_render_with_possible_json_value
-                
+
     def update(self):
         """ Update the States"""
         if self._power == self._payload["POWER_OFF"]:
@@ -726,7 +726,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 {"content_type": media_type, "content_id": media_id}, context=self._context
             )
 
-    # Multiroom 
+    # Multiroom
 
     async def async_added_to_hass(self):
         """Record entity."""
@@ -748,7 +748,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             await self._join_script.async_run(
                 {"master_id": self.multiroom_id, "client_ids": list(map(lambda e: e.multiroom_id, client_entities))}, context=self._context
             )
-            
+
     async def async_unjoin(self):
         """Select input source."""
         if self._unjoin_script:
@@ -815,7 +815,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._mqtt_player_state = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(True)
-           
+
 
         if self._topic[PLAYERSTATUS_TOPIC] is not None:
             topics[PLAYERSTATUS_TOPIC] = {
@@ -831,7 +831,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._source = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[SOURCE_TOPIC] is not None:
             topics[SOURCE_TOPIC] = {
@@ -850,7 +850,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 self._source_list = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[SOURCELIST_TOPIC] is not None:
             topics[SOURCELIST_TOPIC] = {
@@ -866,7 +866,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._soundmode = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[SOUNDMODE_TOPIC] is not None:
             topics[SOUNDMODE_TOPIC] = {
@@ -885,7 +885,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 self._soundmode_list = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[SOUNDMODELIST_TOPIC] is not None:
             topics[SOUNDMODELIST_TOPIC] = {
@@ -901,7 +901,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._shuffle = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[SHUFFLE_TOPIC] is not None:
             topics[SHUFFLE_TOPIC] = {
@@ -917,7 +917,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._repeat = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[REPEAT_TOPIC] is not None:
             topics[REPEAT_TOPIC] = {
@@ -992,7 +992,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 "msg_callback": maxvolume_received,
                 "qos": self._config[CONF_QOS],
             }
-        
+
         @callback
         def mute_received(msg):
             """Handle new received MQTT message."""
@@ -1000,7 +1000,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._mute = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[MUTE_TOPIC] is not None:
             topics[MUTE_TOPIC] = {
@@ -1016,7 +1016,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._track_name = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[MEDIA_TITLE_TOPIC] is not None:
             topics[MEDIA_TITLE_TOPIC] = {
@@ -1024,7 +1024,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 "msg_callback": title_received,
                 "qos": self._config[CONF_QOS],
             }
-        
+
         @callback
         def artist_received(msg):
             """Handle new received MQTT message."""
@@ -1032,7 +1032,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._track_artist = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[MEDIA_ARTIST_TOPIC] is not None:
             topics[MEDIA_ARTIST_TOPIC] = {
@@ -1040,7 +1040,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 "msg_callback": artist_received,
                 "qos": self._config[CONF_QOS],
             }
-        
+
         @callback
         def album_received(msg):
             """Handle new received MQTT message."""
@@ -1048,7 +1048,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._track_album_name = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[MEDIA_ALBUM_TOPIC] is not None:
             topics[MEDIA_ALBUM_TOPIC] = {
@@ -1068,11 +1068,11 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 try:
                     self._media_position = int(payload)
                 except:
-                    pass    
+                    pass
             self._media_position_last_update = lastUpdate
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[MEDIA_POSITION_TOPIC] is not None:
             topics[MEDIA_POSITION_TOPIC] = {
@@ -1080,7 +1080,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 "msg_callback": position_received,
                 "qos": self._config[CONF_QOS],
             }
-        
+
         @callback
         def duration_received(msg):
             """Handle new received MQTT message."""
@@ -1091,10 +1091,10 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 try:
                     self._media_duration = int(payload)
                 except:
-                    pass            
+                    pass
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[MEDIA_DURATION_TOPIC] is not None:
             topics[MEDIA_DURATION_TOPIC] = {
@@ -1110,7 +1110,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._albumart = base64.b64decode(payload.replace("\n", ""))
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[ALBUMART_TOPIC] is not None:
             topics[ALBUMART_TOPIC] = {
@@ -1126,7 +1126,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             self._albumart_url = payload
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[ALBUMARTURL_TOPIC] is not None:
             topics[ALBUMARTURL_TOPIC] = {
@@ -1144,7 +1144,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             if(isinstance(payload, list)):
                 self._multiroom_groupIds = payload
             self.refresh_group()
-           
+
 
         if self._topic[MULTIROOMCLIENTS_TOPIC] is not None:
             topics[MULTIROOMCLIENTS_TOPIC] = {
@@ -1164,7 +1164,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
             _LOGGER.debug("Received master_topic: %s", self._isGroupMaster)
             if MQTTMediaPlayer:
                 self.schedule_update_ha_state(False)
-           
+
 
         if self._topic[MULTIROOM_MASTER_TOPIC] is not None:
             topics[MULTIROOM_MASTER_TOPIC] = {
@@ -1172,11 +1172,11 @@ class MQTTMediaPlayer(MediaPlayerEntity):
                 "msg_callback": multiroommaster_received,
                 "qos": self._config[CONF_QOS],
             }
-        
+
         self._sub_state = subscription.async_prepare_subscribe_topics(
             self.hass, self._sub_state, topics
         )
-        
+
         await subscription.async_subscribe_topics(
             self.hass, self._sub_state
         )
