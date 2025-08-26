@@ -507,7 +507,7 @@ class MQTTMediaPlayer(MediaPlayerEntity):
         """Return the content type of current playing media."""
         if self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED]:
             return MediaType.MUSIC
-        return MediaPlayerState.STANDBY
+        return MediaPlayerState.IDLE
 
     @property
     def media_duration(self):
